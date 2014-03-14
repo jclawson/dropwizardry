@@ -1,0 +1,24 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.jasonclawson.dropwizardry</groupId>
+    <artifactId>dropwizardry-parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <artifactId>dropwizardry-config-hocon</artifactId>
+  <name>HOCON configuration support</name>
+  <description>Enabled using HOCON to configure your dropwizard application</description>
+  
+  <dependencies>
+    <dependency>
+            <groupId>com.jasonclawson</groupId>
+            <artifactId>jackson-dataformat-hocon</artifactId>
+        </dependency>
+        
+        <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-core</artifactId>
+        </dependency>
+  </dependencies>
+  
+</project>
