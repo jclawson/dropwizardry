@@ -13,7 +13,8 @@ import com.jasonclawson.dropwizardry.jersey.errors.ErrorMessagePlainMessageBodyW
 import com.jasonclawson.dropwizardry.jersey.errors.LoggingDebugExceptionMapper;
 
 
-public class DropwizardryJerseyBundle<T> implements ConfiguredBundle<T> {
+@SuppressWarnings("rawtypes")
+public class DropwizardryJerseyBundle implements ConfiguredBundle {
 
     private final ObjectMapper objectMapper;
     
@@ -22,13 +23,13 @@ public class DropwizardryJerseyBundle<T> implements ConfiguredBundle<T> {
     }
     
     @Override
-    public void initialize(Bootstrap<?> bootstrap) {}
+    public void initialize(Bootstrap bootstrap) {}
 
     @Override
-    public void run(T configuration, Environment environment) {
+    public void run(Object configuration, Environment environment) {
         boolean debuggable = false;
         if(configuration instanceof JerseyDebuggable) {
-            debuggable = ((JerseyDebuggable) configuration).isDebuggable();
+            debuggable = ((JerseyDebuggable) configuration).isJerseyDebuggable();
         }
         
         JerseyEnvironment jersey = environment.jersey();

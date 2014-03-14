@@ -1,6 +1,7 @@
 package com.jasonclawson.dropwizardry.guice;
 
 import io.dropwizard.Bundle;
+import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.lifecycle.Managed;
 
 import java.util.Map;
@@ -26,6 +27,9 @@ import com.google.inject.name.Names;
  */
 public abstract class AbstractDropwizardModule extends AbstractModule {
     private final Set<Class<? extends Bundle>> bundles = Sets.newHashSet();
+    @SuppressWarnings("rawtypes")
+    private final Set<Class<? extends ConfiguredBundle>> configuredBundles = Sets.newHashSet();
+    
     private final Set<Class<?>> jerseyResources = Sets.newHashSet();
     private final Set<Class<? extends Managed>> managed = Sets.newHashSet();
     private final Map<String, Class<? extends HealthCheck>> healthChecks = Maps.newHashMap();
@@ -40,6 +44,10 @@ public abstract class AbstractDropwizardModule extends AbstractModule {
      */
     protected void addBundle(Class<? extends Bundle> bundleClass) {
         bundles.add(bundleClass);
+    }
+    
+    protected void addConfiguredBundle(@SuppressWarnings("rawtypes") Class<? extends ConfiguredBundle> bundleClass) {
+        configuredBundles.add(bundleClass);
     }
     
     protected GuiceJerseyEnvironment jersey() {
@@ -73,6 +81,14 @@ public abstract class AbstractDropwizardModule extends AbstractModule {
                 Multibinder.newSetBinder(binder(), Bundle.class, Names.named("dw-bundles"));
         for(Class<? extends Bundle> bundle : bundles) {
             engineBinder.addBinding().to(bundle);
+        }
+        
+      //bind dropwizard configured bundles
+        @SuppressWarnings("rawtypes")
+        Multibinder<ConfiguredBundle> configuredBundleBinder = 
+                Multibinder.newSetBinder(binder(), ConfiguredBundle.class, Names.named("dw-configured-bundles"));
+        for(@SuppressWarnings("rawtypes") Class<? extends ConfiguredBundle> bundle : configuredBundles) {
+            configuredBundleBinder.addBinding().to(bundle);
         }
         
         //bind jersey resources

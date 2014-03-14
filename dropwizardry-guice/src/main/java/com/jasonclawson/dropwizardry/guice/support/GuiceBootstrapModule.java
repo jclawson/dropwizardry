@@ -2,6 +2,7 @@ package com.jasonclawson.dropwizardry.guice.support;
 
 import io.dropwizard.Bundle;
 import io.dropwizard.Configuration;
+import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
 
@@ -45,16 +46,27 @@ public class GuiceBootstrapModule extends AbstractDropwizardModule {
     }
     
     protected static class GuiceDropwizardBundleInitializer<T extends Configuration>{
+        @SuppressWarnings({ "unchecked", "rawtypes" })
         @Inject
         protected GuiceDropwizardBundleInitializer(
                 @Named("dw-bundles") Set<Bundle> bundles,
+                @Named("dw-configured-bundles") Set<ConfiguredBundle> configuredBundles,
                 @Named("dw-jersey-resources") Set<Object> resources,
                 @Named("dw-managed") Set<Managed> managed,
                 @Named("dw-healthchecks") Map<String, HealthCheck> healthChecks,
-                Environment environment) {
+                Environment environment,
+                Configuration configuration) {
             
             for(Bundle bundle : bundles) {
                 bundle.run(environment);
+            }
+            
+            for(ConfiguredBundle bundle : configuredBundles) {
+                try {
+                    bundle.run(configuration, environment);
+                } catch (Exception e) {
+                    throw new RuntimeException("Unable to run configured bundle '"+bundle.getClass()+"'", e);
+                }
             }
             
             //TODO: how does this play with dropwizard?

@@ -1,5 +1,7 @@
 package com.jasonclawson.dropwizardry.jersey.errors;
 
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
 import lombok.Getter;
@@ -34,5 +36,10 @@ public abstract class BaseWebApplicationException extends RuntimeException {
         super(message, cause);
         this.data = Optional.fromNullable(data);
         this.status = status;
+    }
+    
+    protected ResponseBuilder createResponseBuilder() {
+        return Response.status(status)
+                       .entity(getMessage());
     }
 }

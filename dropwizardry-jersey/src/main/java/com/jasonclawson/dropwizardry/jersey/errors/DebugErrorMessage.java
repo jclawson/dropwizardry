@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.Set;
 
+import com.google.common.base.Preconditions;
+
 import lombok.Getter;
 
 @Getter
@@ -15,34 +17,25 @@ public class DebugErrorMessage  {
     private final ExceptionBean exception;
     
     public DebugErrorMessage(long errorId, Throwable t) {
+        Preconditions.checkNotNull(t);
         this.errorId = errorId;
         exception = new ExceptionBean(t);
     }
     
-    public DebugErrorMessage(long errorId) {
-        this.errorId = errorId;
-        exception = null;
-    }
-    
     @Override
     public String toString() {
-      
-      if(exception != null) {
-          StringWriter str = new StringWriter();
-          try {
-              exception.printStackTrace(str);
-          } catch (IOException e) {
-              throw new RuntimeException("Unable to write StackTrace for errorId '"+errorId+"'", e);
-          }
-          return formatErrorMessage(errorId)+" "+str.toString();
-      } else {
-          return formatErrorMessage(errorId);
-      }
+        StringWriter str = new StringWriter();
+        try {
+            exception.printStackTrace(str);
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to write StackTrace for errorId '"+errorId+"'", e);
+        }
+        return LoggingDebugExceptionMapper.formatErrorMessage(errorId)+" "+str.toString();
     }
     
-    private String formatErrorMessage(long id) {
-        return String.format("There was an error processing your request. It has been logged (ID %016x).", id);
-    }
+//    private String formatErrorMessage(long id) {
+//        return String.format("There was an error processing your request. It has been logged (ID %016x).", id);
+//    }
     
     @Getter
     protected static class ExceptionBean {
