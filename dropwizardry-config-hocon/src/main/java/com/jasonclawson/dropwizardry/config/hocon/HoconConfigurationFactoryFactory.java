@@ -1,11 +1,12 @@
 package com.jasonclawson.dropwizardry.config.hocon;
 
+import io.dropwizard.configuration.ConfigurationFactory;
+import io.dropwizard.configuration.ConfigurationFactoryFactory;
+import io.dropwizard.configuration.HoconConfigurationFactory;
+
 import javax.validation.Validator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import io.dropwizard.configuration.ConfigurationFactory;
-import io.dropwizard.configuration.ConfigurationFactoryFactory;
 
 public class HoconConfigurationFactoryFactory<T> implements ConfigurationFactoryFactory<T> {
 	@Override
@@ -14,6 +15,6 @@ public class HoconConfigurationFactoryFactory<T> implements ConfigurationFactory
             Validator    validator, 
             ObjectMapper objectMapper,
             String       propertyPrefix) {
-        return new ConfigurationFactory<>(klass, validator, objectMapper, propertyPrefix);
+        return new HoconConfigurationFactory<>(klass, validator, objectMapper, propertyPrefix);
     }
 }

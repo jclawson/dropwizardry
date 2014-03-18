@@ -103,22 +103,24 @@ public class GuiceSupport<T extends Configuration> implements ConfiguredBundle<T
         injector = Guice.createInjector(this.stage, modules);
     }
 
+   
+    
     @Override
     public void run(final T configuration, final Environment environment) {
         if (configurationClass.isPresent()) {
-            dropwizardEnvironmentModule = new DropwizardEnvironmentModule<T>(configurationClass.get());
+            dropwizardEnvironmentModule = new DropwizardEnvironmentModule<T>(configurationClass.get(), configuration, environment);
         } else {
-            dropwizardEnvironmentModule = new DropwizardEnvironmentModule<Configuration>(Configuration.class);
+            dropwizardEnvironmentModule = new DropwizardEnvironmentModule<Configuration>(Configuration.class, configuration, environment);
         }
         
-        setEnvironment(configuration, environment);
+//        setEnvironment(configuration, environment);
         
         container = new GuiceContainer();
         JerseyContainerModule jerseyContainerModule = new JerseyContainerModule(container);
         
         modules.add(jerseyContainerModule);
         modules.add(dropwizardEnvironmentModule);
-
+        
         initInjector();
         
         container.setResourceConfig(environment.jersey().getResourceConfig());
@@ -134,10 +136,10 @@ public class GuiceSupport<T extends Configuration> implements ConfiguredBundle<T
         
     }
 
-    @SuppressWarnings("unchecked")
-    private void setEnvironment(final T configuration, final Environment environment) {
-        dropwizardEnvironmentModule.setEnvironmentData(configuration, environment);
-    }
+//    @SuppressWarnings("unchecked")
+//    private void setEnvironment(final T configuration, final Environment environment) {
+//        dropwizardEnvironmentModule.setEnvironmentData(configuration, environment);
+//    }
 
     public Injector getInjector() {
         return injector;

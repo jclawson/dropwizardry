@@ -3,63 +3,79 @@ package com.jasonclawson.dropwizardry.guice.support;
 
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Environment;
+
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+import lombok.extern.slf4j.Slf4j;
+
 import com.google.inject.AbstractModule;
-import com.google.inject.Provider;
-import com.google.inject.Provides;
-import com.google.inject.ProvisionException;
+import com.google.inject.name.Names;
 
 /**
- * This code was taken from https://github.com/HubSpot/dropwizard-guice
- * 
- * License: Apache License Version 2.0
- * 
- * @author Mike Axiak
- * @author eliast
- * @author dmorgantini
- * @author lunacik
  *
  * @param <T>
  */
+@Slf4j
 public class DropwizardEnvironmentModule<T extends Configuration> extends AbstractModule {
-    private static final String ILLEGAL_DROPWIZARD_MODULE_STATE = "The dropwizard environment has not yet been set. This is likely caused by trying to access the dropwizard environment during the bootstrap phase.";
-    private T configuration;
-    private Environment environment;
+    private final T configuration;
+    private final Environment environment;
     private Class<? super T> configurationClass;
 
-    public DropwizardEnvironmentModule(Class<T> configurationClass) {
+    public DropwizardEnvironmentModule(Class<T> configurationClass, T configuration, Environment environment) {
         this.configurationClass = configurationClass;
-    }
-
-    @Override
-    protected void configure() {
-        Provider<T> provider = new CustomConfigurationProvider();
-        bind(configurationClass).toProvider(provider);
-        if (configurationClass != Configuration.class) {
-            bind(Configuration.class).toProvider(provider);
-        }
-    }
-
-    public void setEnvironmentData(T configuration, Environment environment) {
         this.configuration = configuration;
         this.environment = environment;
     }
 
-    @Provides
-    public Environment providesEnvironment() {
-        if (environment == null) {
-            throw new ProvisionException(ILLEGAL_DROPWIZARD_MODULE_STATE);
+    @Override
+    protected void configure() {
+        bind(Configuration.class).toInstance(configuration);
+        if(configurationClass != Configuration.class) {
+            bind(configurationClass).toInstance(configuration);
         }
-        return environment;
+        bind(Environment.class).toInstance(environment);
+        initConfigurationBindings();
+    }
+    
+    @SuppressWarnings("unchecked")
+    private void initConfigurationBindings() {
+        try {
+            BeanInfo beanInfo = Introspector.getBeanInfo(configurationClass);
+            PropertyDescriptor[] props = beanInfo.getPropertyDescriptors();
+            
+            Object current = configuration;
+            for(PropertyDescriptor prop : props) {
+                Method readMethod = prop.getReadMethod();
+                if(readMethod.getParameterTypes().length == 0) {
+                    try {
+                        Object value = readMethod.invoke(current);
+                        
+                        //TODO: add support for binding generic types too!
+                        if(value.getClass().getGenericInterfaces().length > 0) {
+                            log.warn("Binding of generic types is not supported yet. Will not bind {}", value.getClass());
+                            continue;
+                        }
+                        
+                        bind((Class<Object>)value.getClass())
+                            .annotatedWith(Names.named(prop.getName()))
+                            .toInstance(value);
+                        log.debug("Binding {} annotated with \"{}\"", value.getClass(), prop.getName());
+                    } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+                        log.error("Unable to bind '{}' due to readMethod invoke error",prop.getName(), e);
+                    }
+                    
+                }
+            }
+            
+        } catch (IntrospectionException e) {
+            log.error("Unable to introspect bean info for {}. I will try to continue without binding configurations", configurationClass); 
+        }
     }
 
-    private class CustomConfigurationProvider implements Provider<T> {
-        @Override
-        public T get() {
-            if (configuration == null) {
-                throw new ProvisionException(ILLEGAL_DROPWIZARD_MODULE_STATE);
-            }
-            return configuration;
-        }
-    }
 }
 

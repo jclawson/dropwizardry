@@ -5,7 +5,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
 /**
- * Install this dropwizar bundle to use HOCON instead of the default YAML configuration parser
+ * Install this dropwizard bundle to use HOCON instead of the default YAML configuration parser
  * @author jclawson
  *
  */

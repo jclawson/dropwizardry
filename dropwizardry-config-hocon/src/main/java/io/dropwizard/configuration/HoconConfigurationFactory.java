@@ -40,7 +40,7 @@ import com.typesafe.config.ConfigOrigin;
  * @author jclawson
  * @param <T> the type of the configuration objects to produce
  */
-public class HoconConfigurationFactory<T> {
+public class HoconConfigurationFactory<T> extends ConfigurationFactory<T> {
     private final Class<T> klass;
     private final String propertyPrefix;
     private final ObjectMapper mapper;
@@ -59,6 +59,8 @@ public class HoconConfigurationFactory<T> {
                                 Validator validator,
                                 ObjectMapper objectMapper,
                                 String propertyPrefix) {
+        super(klass, validator, objectMapper, propertyPrefix);
+        
         this.klass = klass;
         this.propertyPrefix = propertyPrefix.endsWith(".") ? propertyPrefix : propertyPrefix + '.';
         this.mapper = objectMapper.copy();
