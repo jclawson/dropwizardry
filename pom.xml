@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.jasonclawson.dropwizardry</groupId>
 	<artifactId>dropwizardry-parent</artifactId>
-	<version>0.5.0</version>
+	<version>0.5.1-SNAPSHOT</version>
 	<name>Dropwizard Plus</name>
 	<description>addons for dropwizard</description>
 	<url>https://github.com/jclawson/dropwizardry</url>
@@ -16,7 +16,7 @@
 		<connection>scm:git:git:github.com/jclawson/dropwizardry.git</connection>
 		<developerConnection>scm:git:git@github.com:jclawson/dropwizardry.git</developerConnection>
 		<url>https://github.com/jclawson/dropwizardry/</url>
-	  <tag>dropwizardry-parent-0.5.0</tag>
+	  <tag>HEAD</tag>
   </scm>
 
 	<developers>
