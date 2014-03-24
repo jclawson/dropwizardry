@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>com.jasonclawson.dropwizardry</groupId>
 		<artifactId>dropwizardry-parent</artifactId>
-		<version>0.5.1-SNAPSHOT</version>
+		<version>0.5.1</version>
 	</parent>
 	<artifactId>dropwizardry-jersey</artifactId>
 	<name>Jersey addons for dropwizard</name>
