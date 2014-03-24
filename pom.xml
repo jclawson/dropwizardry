@@ -3,8 +3,8 @@
 	<groupId>com.jasonclawson.dropwizardry</groupId>
 	<artifactId>dropwizardry-parent</artifactId>
 	<version>0.5.1-SNAPSHOT</version>
-	<name>Dropwizard Plus</name>
-	<description>addons for dropwizard</description>
+	<name>Dropwizardry Parent</name>
+	<description>Addons for Dropwizard</description>
 	<url>https://github.com/jclawson/dropwizardry</url>
 
 	<properties>
