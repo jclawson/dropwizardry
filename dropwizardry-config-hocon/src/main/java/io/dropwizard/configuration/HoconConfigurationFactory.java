@@ -88,9 +88,10 @@ public class HoconConfigurationFactory<T> extends ConfigurationFactory<T> {
                     .setCause(e)
                     .setDetail(e.getMessage());
             
-            ConfigOrigin origin = e.origin();            
-            builder.setLocation(origin.lineNumber(), 0);
-
+            ConfigOrigin origin = e.origin();
+            if (origin != null) {
+                builder.setLocation(origin.lineNumber(), 0);
+            }
             throw builder.build(path);
         }
     }
