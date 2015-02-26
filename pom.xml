@@ -59,13 +59,13 @@
 			<dependency>
 				<groupId>com.jasonclawson</groupId>
 				<artifactId>jackson-dataformat-hocon</artifactId>
-				<version>1.0.8</version>
+				<version>1.0.13</version>
 			</dependency>
 
 			<dependency>
 				<groupId>io.dropwizard</groupId>
 				<artifactId>dropwizard-core</artifactId>
-				<version>0.7.0-rc2</version>
+				<version>0.7.1</version>
 			</dependency>
 			
 			<dependency>
